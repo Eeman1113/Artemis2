@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+\<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -602,9 +602,11 @@ async function fetchHorizons() {
 
   const targetUrl = 'https://ssd.jpl.nasa.gov/api/horizons.api?' + params;
 
-  // We are on GitHub Pages now, so we can fetch directly from NASA.
-  // No proxy needed, no CORS issues.
-  const resp = await fetch(targetUrl, { signal: AbortSignal.timeout(14000) });
+  // Turns out NASA's CORS policy doesn't care if you're on localhost, file://,
+  // or a fancy GitHub Pages domain. It strictly blocks cross-origin browser fetch requests.
+  // We HAVE to use a proxy to get the real data. 
+  const proxyUrl = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(targetUrl);
+  const resp = await fetch(proxyUrl, { signal: AbortSignal.timeout(14000) });
   
   if (!resp.ok) throw new Error('HTTP ' + resp.status);
   const data = await resp.json();
