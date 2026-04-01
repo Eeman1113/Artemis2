@@ -5,7 +5,8 @@ A modern Next.js application that tracks the Artemis II mission using real-time 
 ## Features
 
 - **Real-time Telemetry**: Fetches spacecraft position and velocity data from NASA JPL Horizons API
-- **CORS Bypass**: Uses Next.js API routes to avoid browser CORS restrictions
+- **CORS Bypass**: Uses public CORS proxy service to avoid browser CORS restrictions
+- **Static Deployment**: Optimized for GitHub Pages with static export
 - **Fallback Physics Model**: Estimates distance and speed if API is unavailable
 - **Dark Mode Dashboard**: Monospaced, data-focused UI with Tailwind CSS
 - **SVG Visualization**: Interactive orbital map showing Earth, Moon, and Orion spacecraft
@@ -38,42 +39,16 @@ npm run dev
 ```
 artemis2/
 ├── app/
-│   ├── api/
-│   │   └── horizons/
-│   │       └── route.ts          # NASA API proxy endpoint
 │   ├── globals.css               # Tailwind CSS imports
 │   ├── layout.tsx                # Root layout
 │   └── page.tsx                  # Main dashboard component
+├── .github/
+│   └── workflows/
+│       └── deploy.yml            # GitHub Actions deployment workflow
 ├── public/                       # Static assets
 ├── tailwind.config.ts            # Tailwind configuration
 ├── tsconfig.json                 # TypeScript configuration
 └── package.json                  # Dependencies
-```
-
-## API Routes
-
-### `/api/horizons`
-
-Server-side proxy that fetches data from NASA JPL Horizons API to bypass CORS restrictions.
-
-**Request:** `GET /api/horizons`
-
-**Response:**
-```json
-{
-  "success": true,
-  "data": {
-    "distance": 12345.6,
-    "speed": 28000.0,
-    "x": 1000.0,
-    "y": 2000.0,
-    "z": 3000.0,
-    "vx": 5.0,
-    "vy": 6.0,
-    "vz": 7.0,
-    "calendarDate": "2026-04-02 12:00:00"
-  }
-}
 ```
 
 ## NASA JPL Horizons API Configuration
@@ -104,43 +79,53 @@ When the NASA API is unavailable, the application uses a physics-based estimatio
 
 ```bash
 npm run build
-npm start
 ```
 
-## Deployment
+This creates a static export in the `out` directory optimized for GitHub Pages.
 
-⚠️ **Important**: This application uses Next.js API routes which require server-side functionality. **GitHub Pages does not support Next.js API routes**.
+## Deployment to GitHub Pages
 
-### Recommended Hosting Options:
+The application is configured for automatic deployment to GitHub Pages via GitHub Actions.
 
-1. **Vercel** (Recommended for Next.js):
-   - Free tier available
-   - Built for Next.js applications
-   - Automatic deployment from GitHub
-   - Supports API routes and server-side rendering
+### Automatic Deployment
 
-2. **Netlify**:
-   - Free tier available
-   - Supports Next.js with serverless functions
-   - Automatic deployment from GitHub
+When you push to the `main` branch, GitHub Actions will:
+1. Install dependencies
+2. Build the static export
+3. Deploy to GitHub Pages
 
-3. **Railway**, **Render**, or **AWS Amplify**:
-   - Various hosting options with serverless support
+### Manual Deployment
 
-To deploy to Vercel:
-1. Push your code to GitHub (already done)
-2. Go to [vercel.com](https://vercel.com) and sign up
-3. Click "New Project"
-4. Import your GitHub repository
-5. Click "Deploy"
+1. Build the project:
+```bash
+npm run build
+```
+
+2. Deploy the `out` folder to GitHub Pages:
+```bash
+gh-pages -d out
+```
+
+### Live Demo
+
+The application is available at: **https://eeman1113.github.io/Artemis2/**
+
+### Technical Notes
+
+- **Static Export**: Uses `next export` to generate static HTML/CSS/JS files
+- **CORS Proxy**: Uses allorigins.win public service to bypass browser CORS restrictions
+- **GitHub Pages**: Serves the static files with no server-side functionality
+- **Fallback Physics**: If the API fails, the app uses physics-based calculations
 
 ## Technologies Used
 
-- **Next.js 14**: React framework with App Router
+- **Next.js 14**: React framework with App Router (Static Export)
 - **React 18**: UI library
 - **TypeScript**: Type safety
 - **Tailwind CSS**: Utility-first CSS framework
 - **NASA JPL Horizons API**: Spacecraft telemetry data source
+- **AllOrigins CORS Proxy**: Public CORS proxy service
+- **GitHub Pages**: Static site hosting
 
 ## License
 

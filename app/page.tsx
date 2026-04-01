@@ -55,16 +55,78 @@ export default function Home() {
 
   const fetchHorizonsData = async () => {
     try {
-      const response = await fetch('/api/horizons');
-      const result = await response.json();
+      const now = new Date();
+      const startTime = now.toISOString().replace('T', ' ').substring(0, 16);
+      const stopTime = new Date(now.getTime() + 60000).toISOString().replace('T', ' ').substring(0, 16);
 
-      if (result.success) {
-        setHorizonsData(result.data);
-        setUseFallback(false);
-      } else {
-        setUseFallback(true);
+      const params = new URLSearchParams({
+        format: 'json',
+        "COMMAND": "'-5'",
+        "MAKE_EPHEM": "'YES'",
+        "EPHEM_TYPE": "'VECTORS'",
+        "CENTER": "'500@399'",
+        "START_TIME": `'${startTime}'`,
+        "STOP_TIME": `'${stopTime}'`,
+        "STEP_SIZE": "'1m'",
+        "VEC_TABLE": "'1'",
+        "CSV_FORMAT": "'YES'"
+      });
+
+      const nasaUrl = `https://ssd.jpl.nasa.gov/api/horizons.api?${params.toString()}`;
+      const corsProxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(nasaUrl)}`;
+
+      const response = await fetch(corsProxyUrl);
+      const proxyResult = await response.json();
+
+      if (!proxyResult.contents) {
+        throw new Error('No response from CORS proxy');
       }
+
+      const data = JSON.parse(proxyResult.contents);
+
+      if (!data.result) {
+        throw new Error('No result in NASA API response');
+      }
+
+      const lines = data.result.split('\n');
+      const soeIndex = lines.findIndex((line: string) => line.includes('$$SOE'));
+
+      if (soeIndex === -1 || lines[soeIndex + 2] === undefined) {
+        throw new Error('Could not parse ephemeris data');
+      }
+
+      const dataLine = lines[soeIndex + 2].trim();
+      const parts = dataLine.split(',').map((p: string) => p.trim());
+
+      if (parts.length < 8) {
+        throw new Error('Invalid data format');
+      }
+
+      const x = parseFloat(parts[2]);
+      const y = parseFloat(parts[3]);
+      const z = parseFloat(parts[4]);
+      const vx = parseFloat(parts[5]);
+      const vy = parseFloat(parts[6]);
+      const vz = parseFloat(parts[7]);
+
+      const distance = Math.sqrt(x * x + y * y + z * z);
+      const speed = Math.sqrt(vx * vx + vy * vy + vz * vz) * 3600;
+
+      setHorizonsData({
+        distance,
+        speed,
+        x,
+        y,
+        z,
+        vx,
+        vy,
+        vz,
+        calendarDate: parts[1]
+      });
+      setUseFallback(false);
+
     } catch (error) {
+      console.error('NASA API Error:', error);
       setUseFallback(true);
     } finally {
       setIsLoading(false);
@@ -247,7 +309,7 @@ export default function Home() {
         </div>
 
         <footer className="mt-8 border-t border-zinc-800 pt-4 text-center text-xs text-zinc-500">
-          Data Source: NASA JPL Horizons System | Updated every 60 seconds | {useFallback && 'Fallback Physics Model Active'}
+          Data Source: NASA JPL Horizons System via CORS Proxy | Updated every 60 seconds | {useFallback && 'Fallback Physics Model Active'}
         </footer>
       </div>
     </main>
