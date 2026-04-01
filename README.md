@@ -107,6 +107,33 @@ npm run build
 npm start
 ```
 
+## Deployment
+
+⚠️ **Important**: This application uses Next.js API routes which require server-side functionality. **GitHub Pages does not support Next.js API routes**.
+
+### Recommended Hosting Options:
+
+1. **Vercel** (Recommended for Next.js):
+   - Free tier available
+   - Built for Next.js applications
+   - Automatic deployment from GitHub
+   - Supports API routes and server-side rendering
+
+2. **Netlify**:
+   - Free tier available
+   - Supports Next.js with serverless functions
+   - Automatic deployment from GitHub
+
+3. **Railway**, **Render**, or **AWS Amplify**:
+   - Various hosting options with serverless support
+
+To deploy to Vercel:
+1. Push your code to GitHub (already done)
+2. Go to [vercel.com](https://vercel.com) and sign up
+3. Click "New Project"
+4. Import your GitHub repository
+5. Click "Deploy"
+
 ## Technologies Used
 
 - **Next.js 14**: React framework with App Router
