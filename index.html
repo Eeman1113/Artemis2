@@ -601,12 +601,11 @@ async function fetchHorizons() {
   });
 
   const targetUrl = 'https://ssd.jpl.nasa.gov/api/horizons.api?' + params;
-  
-  // Sneak past the browser's CORS block using a free proxy 
-  // because we are loading from a local file:/// protocol.
-  const proxyUrl = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(targetUrl);
 
-  const resp = await fetch(proxyUrl, { signal: AbortSignal.timeout(14000) });
+  // We are on GitHub Pages now, so we can fetch directly from NASA.
+  // No proxy needed, no CORS issues.
+  const resp = await fetch(targetUrl, { signal: AbortSignal.timeout(14000) });
+  
   if (!resp.ok) throw new Error('HTTP ' + resp.status);
   const data = await resp.json();
   if (!data.result) throw new Error('No result field');
