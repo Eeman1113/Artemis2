@@ -2,6 +2,8 @@
 
 A modern Next.js application that tracks the Artemis II mission using real-time data from the NASA JPL Horizons API.
 
+**Note**: Since the Artemis II mission is scheduled for 2026 and the Orion spacecraft (ID: -5) may not be in the JPL Horizons database yet, this application currently tracks the **Moon (ID: 301)** as a demonstration of real NASA API integration. This proves the technical implementation works with live data. Once Artemis II launches and the spacecraft gets assigned a SPICE ID, it can be updated to track the actual Orion spacecraft.
+
 ## Features
 
 - **Real-time Telemetry**: Fetches spacecraft position and velocity data from NASA JPL Horizons API

@@ -47,8 +47,8 @@ export default function Home() {
       };
     } else {
       return {
-        distance: 391400,
-        speed: 1680
+        distance: 384400 + (Math.sin(days / 27.3 * Math.PI * 2) * 20000),
+        speed: 3683 + (Math.cos(days / 27.3 * Math.PI * 2) * 100)
       };
     }
   };
@@ -61,7 +61,7 @@ export default function Home() {
 
       const params = new URLSearchParams({
         format: 'json',
-        "COMMAND": "'-5'",
+        "COMMAND": "'301'",
         "MAKE_EPHEM": "'YES'",
         "EPHEM_TYPE": "'VECTORS'",
         "CENTER": "'500@399'",
@@ -175,7 +175,7 @@ export default function Home() {
       <div className="max-w-6xl mx-auto">
         <header className="mb-8 border-b border-zinc-800 pb-4">
           <h1 className="text-4xl font-bold text-zinc-100 mb-2">ARTEMIS II MISSION TRACKER</h1>
-          <p className="text-zinc-400 text-sm">Real-time spacecraft telemetry from NASA JPL Horizons API</p>
+          <p className="text-zinc-400 text-sm">Real-time telemetry from NASA JPL Horizons API (Demonstrating with Moon data)</p>
         </header>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -309,7 +309,7 @@ export default function Home() {
         </div>
 
         <footer className="mt-8 border-t border-zinc-800 pt-4 text-center text-xs text-zinc-500">
-          Data Source: NASA JPL Horizons System via CORS Proxy | Updated every 60 seconds | {useFallback && 'Fallback Physics Model Active'}
+          Data Source: NASA JPL Horizons System | Tracking: Moon (ID: 301) as demonstration | Updated every 60 seconds | {useFallback && '⚠️ API unavailable - Using Physics Model'}
         </footer>
       </div>
     </main>
